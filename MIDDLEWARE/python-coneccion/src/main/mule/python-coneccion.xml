@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="06bb3c5a-9e55-4f0d-a08f-b6a235532f3e" >
+		<http:listener-connection host="localhost" port="8081" />
+		<http:listener-interceptors >
+			<http:cors-interceptor >
+				<http:origins >
+					<http:public-resource />
+				</http:origins>
+			</http:cors-interceptor>
+		</http:listener-interceptors>
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="c37bada9-7e1c-49fc-b0b2-19d81291efdd" >
+		<http:request-connection host="localhost" port="600" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration1" doc:name="HTTP Request configuration" doc:id="858d5ef4-5d7c-4358-aa54-3e30e39f7bca" >
+	</http:request-config>
+	<flow name="python-coneccionFlow1" doc:id="8ab91d29-ad92-4ca4-a010-f7a0f5b7ceae" >
+		<http:listener doc:name="Listener" doc:id="1d4d77a5-0134-4d4a-8bea-fc093bd34ba8" config-ref="HTTP_Listener_config" path="/transferencia/{banco}/{cedulae}/{cedulad}/{cantidad}/{bancodos}"/>
+		<ee:transform doc:name="Transform Message" doc:id="43979e89-722e-4a3b-86aa-ace73554f22b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"banco": attributes.uriParams.'banco',
+	"cedulae": attributes.uriParams.'cedulae',
+	"cedulad": attributes.uriParams.'cedulad',
+	"cantidad": attributes.uriParams.'cantidad',
+	"bancodos": attributes.uriParams.'bancodos',
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[payload]" doc:name="bancoP" doc:id="b5086225-2bdb-4f5a-b027-7443c697b37c" variableName="bancoP"/>
+		<logger level="INFO" doc:name="Logger" doc:id="dc2b1c13-36a4-445c-9031-df011ec3dbed" message="#[vars.bancoP]"/>
+		<choice doc:name="Choice" doc:id="86d9b527-382e-4b4d-a169-de2bae421743" >
+			<when expression='#[vars.bancoP.banco == "pichincha"]' >
+				<logger level="INFO" doc:name="Logger" doc:id="6acdf414-7d8c-42a5-a8fd-16df698dd1f9" message="pichincha" />
+				<choice doc:name="Choice" doc:id="5bbefc5c-8260-4eb2-b5f5-c75e7ba355e5">
+					<when expression='vars.bancoP.bancodos ==  "pichinca"'>
+						<logger level="INFO" doc:name="Logger" doc:id="f4f79c4d-2665-42e5-8c54-341b7081ae89" message="Enviados  #[vars.bancoP.cantidad] de #[vars.bancoP.cedulae] a #[vars.bancoP.cedulad] de pichincha a pichincha" />
+						<http:request method="PUT" doc:name="Envio" doc:id="0c251cec-5add-491e-be0b-a8dcb9af03ae" url='#["http://localhost:600/retiro/" ++ vars.bancoP.cedulae ++ "/" ++ vars.bancoP.cantidad]' />
+						<http:request method="PUT" doc:name="Recibo" doc:id="e486cb3f-8ae6-4bc1-b52a-82877f40f563" url='#["http://localhost:600/deposito/" ++ vars.bancoP.cedulad ++ "/" ++ vars.bancoP.cantidad]' />
+					</when>
+					<otherwise >
+						<logger level="INFO" doc:name="Copy_of_Logger" doc:id="c27cdf37-1d32-4b34-8bf7-10cb62a9d2b2" message="Enviados  #[vars.bancoP.cantidad] de #[vars.bancoP.cedulae] a #[vars.bancoP.cedulad] de pichincha a pacifico" />
+						<http:request method="PUT" doc:name="Copy_of_Envio" doc:id="583ad60b-591b-473f-bad2-4ddd2e0181b9" url='#["http://localhost:600/retiro/" ++ vars.bancoP.cedulae ++ "/" ++ vars.bancoP.cantidad]' />
+						<http:request method="PUT" doc:name="Copy_of_Recibo" doc:id="e6024ee9-1cca-41e4-90d4-f5422d99d51a" url='#["http://localhost:800/deposito/" ++ vars.bancoP.cedulad ++ "/" ++ vars.bancoP.cantidad]' />
+					</otherwise>
+				</choice>
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Logger" doc:id="5d8d5f75-5416-4cb3-b306-1e3db679c3a2" message="Pasifico"/>
+				<choice doc:name="Choice" doc:id="4c023b7a-da89-4e00-a606-eb11c0f3adfe" >
+					<when expression='vars.bancoP.bancodos ==  "pichinca"'>
+						<logger level="INFO" doc:name="Copy_of_Logger" doc:id="4c6f014f-7d39-4c12-9689-394d5706a41a" message="Enviados  #[vars.bancoP.cantidad] de #[vars.bancoP.cedulae] a #[vars.bancoP.cedulad] de pacifico a pichincha" />
+						<http:request method="PUT" doc:name="Copy_of_Envio" doc:id="b65c1b33-9d82-4a20-ac03-d05080eb6fa0" url='#["http://localhost:800/retiro/" ++ vars.bancoP.cedulae ++ "/" ++ vars.bancoP.cantidad]' />
+						<http:request method="PUT" doc:name="Copy_of_Recibo" doc:id="285ecbc6-ec22-437c-944b-af0b6a603485" url='#["http://localhost:600/deposito/" ++ vars.bancoP.cedulad ++ "/" ++ vars.bancoP.cantidad]' />
+					</when>
+					<otherwise >
+						<logger level="INFO" doc:name="Copy_of_Logger" doc:id="e2b729fc-511d-481c-94dc-5e19145f08de" message="Enviados  #[vars.bancoP.cantidad] de #[vars.bancoP.cedulae] a #[vars.bancoP.cedulad] de pacifico a pacifico" />
+						<http:request method="PUT" doc:name="Copy_of_Envio" doc:id="2e2096c5-ce0d-40c5-9260-adfbfa6f8378" url='#["http://localhost:800/retiro/" ++ vars.bancoP.cedulae ++ "/" ++ vars.bancoP.cantidad]' />
+						<http:request method="PUT" doc:name="Copy_of_Recibo" doc:id="4daf64d8-6452-4177-8de0-5fbccd43eca7" url='#["http://localhost:800/deposito/" ++ vars.bancoP.cedulad ++ "/" ++ vars.bancoP.cantidad]' />
+					</otherwise>
+				</choice>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

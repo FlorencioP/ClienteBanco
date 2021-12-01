@@ -1,0 +1,108 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>bancoPichincha</ion-title>
+    </ion-toolbar>
+</ion-header>
+<br>
+<IonCard>
+    <IonCardHeader>
+        <IonCardSubtitle>Transferencia bancaria</IonCardSubtitle>
+    </IonCardHeader>
+
+    <IonCardContent>
+        <ion-item>
+            <ion-label>Banco</ion-label>
+            <ion-select [(ngModel)]="banco" okText="Aceptar" cancelText="Cancelar">
+                <ion-select-option value="pichinca">Banco Pichincha</ion-select-option>
+                <ion-select-option value="coop">Banco del Pacifico</ion-select-option>
+
+            </ion-select>
+        </ion-item>
+
+        <ion-item>
+            <ion-label position="floating">Cedula Emisor</ion-label>
+            <ion-input type="text" [(ngModel)]="cedulae"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label position="floating">Cedula Destinatario</ion-label>
+            <ion-input type="text" [(ngModel)]="cedulad"></ion-input>
+        </ion-item>
+
+
+        <ion-item>
+            <ion-label position="floating">Cantidad</ion-label>
+            <ion-input type="text" [(ngModel)]="cantidad"></ion-input>
+        </ion-item>
+        <ion-button expand="block" (click)="transferencia()">Depositar</ion-button>
+    </IonCardContent>
+</IonCard>
+<br>
+<IonContent>
+    <IonCard>
+        <IonCardHeader>
+            <IonCardSubtitle>Deposito</IonCardSubtitle>
+        </IonCardHeader>
+
+        <IonCardContent>
+            <ion-item>
+                <ion-label position="floating">Cedula</ion-label>
+                <ion-input type="text" [(ngModel)]="cedula"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-label position="floating">Cantidad</ion-label>
+                <ion-input type="text" [(ngModel)]="cantidad"></ion-input>
+            </ion-item>
+            <ion-button expand="block" (click)="deposito()">Depositar</ion-button>
+        </IonCardContent>
+    </IonCard>
+</IonContent>
+
+<br>
+
+<IonContent>
+    <IonCard>
+        <IonCardHeader>
+            <IonCardSubtitle>Retiro</IonCardSubtitle>
+        </IonCardHeader>
+
+        <IonCardContent>
+            <ion-item>
+                <ion-label position="floating">Cedula</ion-label>
+                <ion-input type="text" [(ngModel)]="cedula"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-label position="floating">Retiro</ion-label>
+                <ion-input type="text" [(ngModel)]="retiro"></ion-input>
+            </ion-item>
+            <ion-button expand="block" (click)="retiroo()">Retirar</ion-button>
+        </IonCardContent>
+    </IonCard>
+</IonContent>
+
+<br>
+
+<IonContent>
+    <IonCard>
+        <IonCardHeader>
+            <IonCardSubtitle>Consulta</IonCardSubtitle>
+        </IonCardHeader>
+
+        <IonCardContent>
+            <ion-item>
+                <ion-label position="floating">Cedula</ion-label>
+                <ion-input type="text" [(ngModel)]="cedula"></ion-input>
+            </ion-item>
+            <div *ngIf="cent==true">
+                <h4>Usted tiene {{dinero}} $</h4>
+            </div>
+            <ion-button expand="block" (click)="consulta()">Consultar</ion-button>
+        </IonCardContent>
+    </IonCard>
+</IonContent>
+
+<ion-content>
+
+</ion-content>
