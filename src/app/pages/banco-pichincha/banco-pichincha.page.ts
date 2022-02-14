@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams  } from '@angular/common/http';
+import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
+
 @Component({
   selector: 'app-banco-pichincha',
   templateUrl: './banco-pichincha.page.html',
@@ -16,7 +18,27 @@ export class BancoPichinchaPage implements OnInit {
   dinero:any;
   cent:boolean=false;
   banco:string;
-  constructor( private http : HttpClient) { }
+
+  urlFLS = "http://134.209.93.187:30000/"
+  options : InAppBrowserOptions = {
+    location : 'yes',//Or 'no' 
+    hidden : 'no', //Or  'yes'
+    clearcache : 'yes',
+    clearsessioncache : 'yes',
+    zoom : 'yes',//Android only ,shows browser zoom controls 
+    hardwareback : 'yes',
+    mediaPlaybackRequiresUserAction : 'no',
+    shouldPauseOnSuspend : 'no', //Android only 
+    closebuttoncaption : 'Close', //iOS only
+    disallowoverscroll : 'no', //iOS only 
+    toolbar : 'yes', //iOS only 
+    enableViewportScale : 'no', //iOS only 
+    allowInlineMediaPlayback : 'no',//iOS only 
+    presentationstyle : 'pagesheet',//iOS only 
+    fullscreen : 'yes',//Windows only    
+  };
+
+  constructor( private http : HttpClient, private theInAppBrowser: InAppBrowser) { }
 
   ngOnInit() {
     
@@ -60,6 +82,11 @@ export class BancoPichinchaPage implements OnInit {
       }
     });
     console.log(this.cantidad);
+  }
+
+  resources() {
+    let target = "_self";
+    this.theInAppBrowser.create(this.urlFLS,target,this.options);
   }
 
 }
