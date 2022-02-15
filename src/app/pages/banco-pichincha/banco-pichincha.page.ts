@@ -19,7 +19,7 @@ export class BancoPichinchaPage implements OnInit {
   cent:boolean=false;
   banco:string;
 
-  urlFLS = "http://134.209.93.187:30000/"
+  urlFLS = "http://143.110.153.164:30000/"
   options : InAppBrowserOptions = {
     location : 'yes',//Or 'no' 
     hidden : 'no', //Or  'yes'
