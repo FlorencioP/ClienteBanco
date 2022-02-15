@@ -9,7 +9,7 @@ import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-a
 })
 export class BancoPichinchaPage implements OnInit {
 
-  API: string = "http://localhost:600/deposito";
+  API: string = "http://192.168.50.10:50/deposito";
   cedula:String;
   cedulae:String;
   cedulad:String;
@@ -44,20 +44,10 @@ export class BancoPichinchaPage implements OnInit {
     
   }
 
-  transferencia(){
-    
-    let headers = new Headers({ 'Content-Type': 'application/json'});
-    this.http.post("http://localhost:8081/transferencia/pichincha/"+this.cedulae+"/"+this.cedulad+"/"+this.cantidad+"/"+this.banco,headers).subscribe((response)=>{
-      console.log(response);
-    });
-    console.log(this.cantidad);
-
-  }
-
   deposito(){
     
     let headers = new Headers({ 'Content-Type': 'application/json'});
-    this.http.put("http://localhost:600/deposito/"+this.cedula+"/"+this.cantidad,headers).subscribe((response)=>{
+    this.http.put("http://192.168.50.10:50/deposito/"+this.cedula+"/"+this.cantidad,headers).subscribe((response)=>{
       console.log(response);
     });
     console.log(this.cantidad);
@@ -67,7 +57,7 @@ export class BancoPichinchaPage implements OnInit {
   retiroo(){
     
     let headers = new Headers({ 'Content-Type': 'application/json'});
-    this.http.put("http://localhost:600/retiro/"+this.cedula+"/"+this.retiro,headers).subscribe((response)=>{
+    this.http.put("http://192.168.50.10:50/retiro/"+this.cedula+"/"+this.retiro,headers).subscribe((response)=>{
       console.log(response);
     });
     console.log(this.cantidad);
@@ -75,7 +65,7 @@ export class BancoPichinchaPage implements OnInit {
   }
 
   consulta(){
-    this.http.get("http://localhost:600/consulta/"+this.cedula).subscribe((response)=>{
+    this.http.get("http://192.168.50.10:50/consulta/"+this.cedula).subscribe((response)=>{
       this.dinero=response;
       if (this.dinero >=0){
         this.cent=true;
